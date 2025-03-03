@@ -14,6 +14,11 @@ OffsetCameraStep::OffsetCameraStep(float eye_offset)
 	move.setTranslation(core::vector3df(eye_offset, 0.0f, 0.0f));
 }
 
+OffsetCameraStep::OffsetCameraStep(int camID, int camCount, float spacing)
+{
+    float offset = (camID-camCount/2)*spacing;
+	move.setTranslation(core::vector3df(offset, 0.0f, 0.0f));
+}
 
 OffsetCameraStep::OffsetCameraStep(bool right_eye)
 {

@@ -17,6 +17,7 @@ class OffsetCameraStep : public TrivialRenderStep
 public:
 	OffsetCameraStep(float eye_offset);
 	OffsetCameraStep(bool right_eye);
+	OffsetCameraStep(int camID, int camCount, float spacing);
 
 	void run(PipelineContext &context) override;
 	void reset(PipelineContext &context) override;

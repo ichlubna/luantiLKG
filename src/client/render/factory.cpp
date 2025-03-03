@@ -9,6 +9,7 @@
 #include "anaglyph.h"
 #include "interlaced.h"
 #include "sidebyside.h"
+#include "lkg.h"
 #include "secondstage.h"
 #include "client/shadows/dynamicshadowsrender.h"
 
@@ -61,6 +62,10 @@ void createPipeline(const std::string &stereo_mode, IrrlichtDevice *device, Clie
 	}
 	if (stereo_mode == "crossview") {
 		populateSideBySidePipeline(result.pipeline, client, false, true, result.virtual_size_scale);
+		return;
+	}
+	if (stereo_mode == "lkg") {
+		populateLkgPipeline(result.pipeline, client, false, false, result.virtual_size_scale);
 		return;
 	}
 
