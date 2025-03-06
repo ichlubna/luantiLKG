@@ -1943,9 +1943,13 @@ void Game::processKeyInput()
 		quicktune->inc();
 	} else if (wasKeyDown(KeyType::QUICKTUNE_DEC)) {
 		quicktune->dec();
-	} else if (wasKeyDown(KeyType::HOLO_CAM_INCREASE)) {
+	} else if (wasKeyDown(KeyType::HOLO_CAM_SPACE_INCREASE)) {
+        client->holoCameraSpacing++;
+	} else if (wasKeyDown(KeyType::HOLO_CAM_SPACE_DECREASE)) {
+        client->holoCameraSpacing--;
+	} else if (wasKeyDown(KeyType::HOLO_CAM_FOCUS_INCREASE)) {
         client->holoCameraFocus++;
-	} else if (wasKeyDown(KeyType::HOLO_CAM_DECREASE)) {
+	} else if (wasKeyDown(KeyType::HOLO_CAM_FOCUS_DECREASE)) {
         client->holoCameraFocus--;
 	}
 

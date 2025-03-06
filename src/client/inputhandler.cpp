@@ -29,8 +29,10 @@ void KeyCache::populate()
 	key[KeyType::DIG] = getKeySetting("keymap_dig");
 	key[KeyType::PLACE] = getKeySetting("keymap_place");
 	
-    key[KeyType::HOLO_CAM_INCREASE] = getKeySetting("keymap_holocam_increase");
-    key[KeyType::HOLO_CAM_DECREASE] = getKeySetting("keymap_holocam_decrease");
+    key[KeyType::HOLO_CAM_SPACE_INCREASE] = getKeySetting("keymap_holocam_space_increase");
+    key[KeyType::HOLO_CAM_SPACE_DECREASE] = getKeySetting("keymap_holocam_space_decrease");
+    key[KeyType::HOLO_CAM_FOCUS_INCREASE] = getKeySetting("keymap_holocam_focus_increase");
+    key[KeyType::HOLO_CAM_FOCUS_DECREASE] = getKeySetting("keymap_holocam_focus_decrease");
 
 	key[KeyType::AUTOFORWARD] = getKeySetting("keymap_autoforward");
 

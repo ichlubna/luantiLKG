@@ -198,6 +198,7 @@ public:
 	void drawNametags();
 
 	inline void addArmInertia(f32 player_yaw);
+	v3f m_camera_position;
 
 private:
 	// Use getFrustumCuller().
@@ -221,7 +222,6 @@ private:
 	f32 m_cache_fov;
 
 	// Absolute camera position
-	v3f m_camera_position;
 	// Absolute camera direction
 	v3f m_camera_direction;
 	// Camera offset

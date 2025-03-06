@@ -14,10 +14,12 @@ OffsetCameraStep::OffsetCameraStep(float eye_offset)
 	move.setTranslation(core::vector3df(eye_offset, 0.0f, 0.0f));
 }
 
-OffsetCameraStep::OffsetCameraStep(int camID, int camCount, float spacing)
+OffsetCameraStep::OffsetCameraStep(int camID, int camCount, float spacingStep, float focusStep)
 {
-    float offset = (camID-camCount/2)*spacing;
-	move.setTranslation(core::vector3df(offset, 0.0f, 0.0f));
+    holoCameraOffset = (camID-camCount/2);
+    holoCameraSpacingStep = spacingStep;
+    holoCameraFocusStep = focusStep; 
+    holoMode = true;
 }
 
 OffsetCameraStep::OffsetCameraStep(bool right_eye)
@@ -33,5 +35,19 @@ void OffsetCameraStep::reset(PipelineContext &context)
 
 void OffsetCameraStep::run(PipelineContext &context)
 {
-	context.client->getCamera()->getCameraNode()->setPosition((base_transform * move).getTranslation());
+    if(holoMode)
+    {
+        auto cameraNode = context.client->getCamera()->getCameraNode();
+
+        auto projection = cameraNode->getProjectionMatrix();
+        projection(2, 0) = context.client->holoCameraFocus * holoCameraFocusStep * holoCameraOffset;
+        cameraNode->setProjectionMatrix(projection);
+         
+        auto base = cameraNode->getRelativeTransformation(); 
+        move.setTranslation(core::vector3df(holoCameraOffset*context.client->holoCameraSpacing*holoCameraSpacingStep, 0.0f, 0.0f));
+        auto newTransform = base_transform * move;
+        cameraNode->setPosition(newTransform.getTranslation());
+    }
+    else
+        context.client->getCamera()->getCameraNode()->setPosition((base_transform * move).getTranslation());
 }

@@ -31,6 +31,14 @@ void DrawImageStepLkg::run(PipelineContext &context)
 	auto texture = source->getTexture(texture_index);
 	core::dimension2du output_size = context.device->getVideoDriver()->getScreenSize();
 	v2s32 pos(offset.X * output_size.Width, offset.Y * output_size.Height);
+	
+	//context.client->getCamera()->getCameraNode()->setPosition({0.0f, 20.0f, 0.0f});
+	
+    //auto transform = context.device->getVideoDriver()->getTransform(irr::video::ETS_VIEW);
+    //transform.setTranslation({0.0f, 20.0f, 0.0f});
+	//context.device->getVideoDriver()->setTransform(irr::video::ETS_VIEW, transform);
+    context.client->getCamera()->m_camera_position = { 0.0f, 20.0f, 0.0f }; 
+
 	context.device->getVideoDriver()->draw2DImage(texture, pos);
 }
 
@@ -44,7 +52,7 @@ public:
         std::ifstream file(fileName);
         std::string line;
         while (std::getline(file, line))
-        {
+            {
             std::vector<std::string> tokens = split(line, '=');
             params[tokens[0]] = mystof(tokens[1]);
         }
@@ -75,7 +83,7 @@ void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizont
 
 	for (size_t i = 0; i < viewCount; i++) 
     {
-		pipeline->addStep<OffsetCameraStep>(i, viewCount, 2.0f);
+		pipeline->addStep<OffsetCameraStep>(i, viewCount, holo.params["CameraSpacingStep"], holo.params["FocusSpacingStep"]);
 		auto output = pipeline->createOwned<TextureBufferOutput>(
 				buffer, std::vector<u8>{static_cast<u8>(i)}, TEXTURE_DEPTH);
 		pipeline->addStep<SetRenderTargetStep>(step3D, output);
