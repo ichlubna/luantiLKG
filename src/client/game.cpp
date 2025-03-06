@@ -1943,6 +1943,10 @@ void Game::processKeyInput()
 		quicktune->inc();
 	} else if (wasKeyDown(KeyType::QUICKTUNE_DEC)) {
 		quicktune->dec();
+	} else if (wasKeyDown(KeyType::HOLO_CAM_INCREASE)) {
+        client->holoCameraFocus++;
+	} else if (wasKeyDown(KeyType::HOLO_CAM_DECREASE)) {
+        client->holoCameraFocus--;
 	}
 
 	if (!isKeyDown(KeyType::JUMP) && runData.reset_jump_timer) {

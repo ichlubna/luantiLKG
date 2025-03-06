@@ -28,6 +28,9 @@ void KeyCache::populate()
 	key[KeyType::SNEAK] = getKeySetting("keymap_sneak");
 	key[KeyType::DIG] = getKeySetting("keymap_dig");
 	key[KeyType::PLACE] = getKeySetting("keymap_place");
+	
+    key[KeyType::HOLO_CAM_INCREASE] = getKeySetting("keymap_holocam_increase");
+    key[KeyType::HOLO_CAM_DECREASE] = getKeySetting("keymap_holocam_decrease");
 
 	key[KeyType::AUTOFORWARD] = getKeySetting("keymap_autoforward");
 

@@ -107,6 +107,8 @@ public:
 		NOTE: Nothing is thread-safe here.
 	*/
 
+    float holoCameraFocus=1.0f;
+
 	Client(
 			const char *playername,
 			const std::string &password,

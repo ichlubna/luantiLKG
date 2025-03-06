@@ -26,6 +26,8 @@ public:
 		ESC,
 
 		// Other
+        HOLO_CAM_INCREASE,
+        HOLO_CAM_DECREASE,
 		DROP,
 		INVENTORY,
 		CHAT,

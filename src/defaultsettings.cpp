@@ -210,6 +210,10 @@ void set_default_settings()
 	settings->setDefault("keymap_slot31", "");
 	settings->setDefault("keymap_slot32", "");
 
+
+	settings->setDefault("keymap_holocam_increase", "KEY_HOME");
+	settings->setDefault("keymap_holocam_decrease", "KEY_END");
+
 #ifndef NDEBUG
 	// Default keybinds for quicktune in debug builds
 	settings->setDefault("keymap_quicktune_prev", "KEY_HOME");
