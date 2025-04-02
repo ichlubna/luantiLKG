@@ -6,21 +6,15 @@
 #pragma once
 #include "stereo.h"
 
-class DrawImageStepLkg : public RenderStep
+class DrawImageStepLkg : public TrivialRenderStep
 {
 public:
-	DrawImageStepLkg(u8 texture_index, v2f offset);
-
-	void setRenderSource(RenderSource *_source) override;
-	void setRenderTarget(RenderTarget *_target) override;
-
-	void reset(PipelineContext &context) override {}
-	void run(PipelineContext &context) override;
+	DrawImageStepLkg(TextureBuffer *buffer, u8 index, u8 value);
+	void run(PipelineContext &context);
 private:
-	u8 texture_index;
-	v2f offset;
-	RenderSource *source;
-	RenderTarget *target;
+    TextureBuffer *buffer;
+	u8 index;
+    u8 value;
 };
 
 void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizontal, bool flipped, v2f &virtual_size_scale);
