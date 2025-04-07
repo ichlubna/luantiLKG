@@ -109,6 +109,7 @@ public:
 
     float holoCameraSpacing=1.0f;
     float holoCameraFocus=1.0f;
+    bool holoView=true;
 
 	Client(
 			const char *playername,

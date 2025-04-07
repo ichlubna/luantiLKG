@@ -12,16 +12,16 @@
 #include "client/shader.h"
 #include "secondstage.h"
 
-DrawImageStepLkg::DrawImageStepLkg(TextureBuffer *_buffer, u8 _index, u8 _value) :	buffer(_buffer), index(_index), value(_value)
+LoadUniformsStep::LoadUniformsStep(TextureBuffer *_buffer, u8 _index, std::vector<float> _values) :	buffer(_buffer), index(_index), values(_values)
 {}
 
-void DrawImageStepLkg::run(PipelineContext &context)
+void LoadUniformsStep::run(PipelineContext &context)
 {
     auto texture = buffer->getTexture(index);
-	auto size = texture->getSize();
-	u8 *data = reinterpret_cast<u8*>(texture->lock(video::ETLM_WRITE_ONLY));
-    memset(data, value, size.Height * size.Width);
-	texture->unlock();
+	float *data = reinterpret_cast<float*>(texture->lock(video::ETLM_WRITE_ONLY));
+    for(size_t i=0; i<values.size(); i++)
+        data[i] = values[i];
+    texture->unlock();
 }
 
 class HoloSettings
@@ -48,6 +48,7 @@ void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizont
 
 	static const u8 TEXTURE_DEPTH = viewCount;
     static const u8 TEXTURE_UNIFORM = viewCount + 1;
+    static const u8 TEXTURE_TEMP = viewCount + 2;
 
 	auto driver = client->getSceneManager()->getVideoDriver();
 	video::ECOLOR_FORMAT color_format = selectColorFormat(driver);
@@ -56,11 +57,10 @@ void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizont
 	TextureBuffer *buffer = pipeline->createOwned<TextureBuffer>();
     virtual_size_scale = v2f(1.0f/holo.params["Cols"], 1.0f/holo.params["Rows"]);
     buffer->setTexture(TEXTURE_DEPTH, virtual_size_scale, "3d_depthmap", depth_format);
-    buffer->setTexture(TEXTURE_UNIFORM, virtual_size_scale, "3d_uniform", video::ECF_A8R8G8B8);
-    
-    pipeline->addStep<DrawImageStepLkg>(buffer, TEXTURE_UNIFORM, 200); 
-	auto step3D = pipeline->own(create3DStage(client, virtual_size_scale));
-
+    buffer->setTexture(TEXTURE_UNIFORM, v2f(0.01f, 0.01f), "3d_uniform", video::ECF_R32F);
+    buffer->setTexture(TEXTURE_TEMP, virtual_size_scale, "3d_render_temp", color_format);
+   
+    auto step3D = pipeline->own(create3DStage(client, virtual_size_scale));
     std::vector<u8> textureIDs;
 	for (size_t i = 0; i < viewCount; i++) 
     {
@@ -75,29 +75,31 @@ void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizont
 		pipeline->addStep<MapPostFxStep>();
 		pipeline->addStep<DrawHUD>();
 	}
-
 	pipeline->addStep<OffsetCameraStep>(0.0f);
-	auto screen = pipeline->createOwned<ScreenTarget>();
  
-    constexpr size_t BATCH_SIZE = 3;
-    size_t iterations = std::ceil(static_cast<float>(viewCount) / BATCH_SIZE);
-    for (size_t i = 0; i < iterations; i++)
+    constexpr size_t UNIFORM_ITERATION_ID = 0; 
+    constexpr size_t UNIFORM_MODE_ID = 1; 
+    std::vector<float> shaderUniforms = {0.0f, 0.0f, holo.params["Tilt"], holo.params["Pitch"], holo.params["Center"], holo.params["ViewPortionElement"], holo.params["Subp"], static_cast<float>(viewCount), holo.params["Cols"], holo.params["Rows"]};
+    uint32_t shader_id = client->getShaderSource()->getShaderRaw("filter");
+    shaderUniforms[UNIFORM_MODE_ID] = 0;
+    auto output = pipeline->createOwned<TextureBufferOutput>(buffer, TEXTURE_TEMP);
+    for(size_t i=0; i<viewCount; i++) 
     {
-        std::vector<u8> batch;
-        for (size_t j = 0; j < BATCH_SIZE; j++)
-        {
-            size_t index = i * BATCH_SIZE + j;
-            if (index < viewCount)
-                batch.push_back(textureIDs[index]);  
-            else
-                batch.push_back(0);
-        }  
-        batch.push_back(TEXTURE_UNIFORM);
-
-        uint32_t shader_id = client->getShaderSource()->getShaderRaw("filter");
-        PostProcessingStep *effect = pipeline->createOwned<PostProcessingStep>(shader_id, batch);
+        shaderUniforms[UNIFORM_ITERATION_ID] = i;
+        pipeline->addStep<LoadUniformsStep>(buffer, TEXTURE_UNIFORM, shaderUniforms); 
+        PostProcessingStep *effect = pipeline->createOwned<PostProcessingStep>(shader_id, std::vector<u8>{static_cast<u8>(i), TEXTURE_UNIFORM});
         pipeline->addStep(effect);
         effect->setRenderSource(buffer);
-        effect->setRenderTarget(screen);
+        effect->setRenderTarget(output);
     }
+           
+    shaderUniforms[UNIFORM_MODE_ID] = 1;
+    if(static_cast<int>(holo.params["Quilt"]) == 1) 
+        shaderUniforms[UNIFORM_MODE_ID] = 2;
+    pipeline->addStep<LoadUniformsStep>(buffer, TEXTURE_UNIFORM, shaderUniforms); 
+	auto screen = pipeline->createOwned<ScreenTarget>();
+    PostProcessingStep *holoEffect = pipeline->createOwned<PostProcessingStep>(shader_id, std::vector<u8>{TEXTURE_TEMP, TEXTURE_UNIFORM});
+    pipeline->addStep(holoEffect);
+    holoEffect->setRenderSource(buffer);
+    holoEffect->setRenderTarget(screen);
 }

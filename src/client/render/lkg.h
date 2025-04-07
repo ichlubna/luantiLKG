@@ -6,15 +6,15 @@
 #pragma once
 #include "stereo.h"
 
-class DrawImageStepLkg : public TrivialRenderStep
+class LoadUniformsStep : public TrivialRenderStep
 {
 public:
-	DrawImageStepLkg(TextureBuffer *buffer, u8 index, u8 value);
+	LoadUniformsStep(TextureBuffer *buffer, u8 index, std::vector<float> values);
 	void run(PipelineContext &context);
 private:
     TextureBuffer *buffer;
 	u8 index;
-    u8 value;
+    std::vector<float> values;
 };
 
 void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizontal, bool flipped, v2f &virtual_size_scale);
