@@ -44,6 +44,8 @@ public:
 void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizontal, bool flipped, v2f &virtual_size_scale)
 {
     HoloSettings holo("holo.conf");
+    client->holoCameraSpacing = holo.params["InitCameraSpacing"];
+    client->holoCameraFocus = holo.params["InitFocusSpacing"];
     size_t viewCount = static_cast<size_t>(holo.params["Rows"]*holo.params["Cols"]);
 
 	static const u8 TEXTURE_DEPTH = viewCount;
@@ -85,7 +87,7 @@ void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizont
     auto output = pipeline->createOwned<TextureBufferOutput>(buffer, TEXTURE_TEMP);
     for(size_t i=0; i<viewCount; i++) 
     {
-        shaderUniforms[UNIFORM_ITERATION_ID] = i;
+        shaderUniforms[UNIFORM_ITERATION_ID] = viewCount-i-1;
         pipeline->addStep<LoadUniformsStep>(buffer, TEXTURE_UNIFORM, shaderUniforms); 
         PostProcessingStep *effect = pipeline->createOwned<PostProcessingStep>(shader_id, std::vector<u8>{static_cast<u8>(i), TEXTURE_UNIFORM});
         pipeline->addStep(effect);

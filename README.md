@@ -14,7 +14,7 @@ and contributors (see source file comments and the version control log)
 
 ## LKG Version
 
-This repository is an extension of the original luanti repo. This code supports multiview rendering which can be used to play the game on a 3D display by Looking Glass Factory. The following parameters need to be added to the holo.conf file. The parameters are calibration values for the given 3D display and can be retreived by using [this](https://github.com/ichlubna/getLKGCalibration) tool. The keys Home and End are used to refocus the scene, Page Up and Down to change the camera spacing. The rows, cols, spacing, and steps can be adjusted independently on the display model. The quilt value decides if the 3D display native format is displayed or the grid with the views.
+This repository is an extension of the original luanti repo. This code supports multiview rendering which can be used to play the game on a 3D display by Looking Glass Factory. The following parameters need to be added to the holo.conf file. The parameters are calibration values for the given 3D display and can be retreived by using [this](https://github.com/ichlubna/getLKGCalibration) tool. The numpad keys Home and End are used to refocus the scene, Page Up and Down to change the camera spacing. The rows, cols, spacing, and steps can be adjusted independently on the display model. The quilt value decides if the 3D display native format is displayed or the grid with the views.
 
 ```
 [Holo]
@@ -25,6 +25,8 @@ Pitch=354.421
 Center=0.042
 ViewPortionElement=0.99976
 Subp=0.000130208
+InitCameraSpacing=-47.0
+InitFocusSpacing=-20.0
 CameraFocusStep=0.001
 CameraSpacingStep=0.001
 Quilt=0
@@ -43,7 +45,7 @@ And it is recommended to set also the following parameters according to the visu
 ```
 screen_w = 1920
 screen_h = 1080
-hud_scaling = 1.5
+hud_scaling = 0.5
 ```
 
 Table of Contents
