@@ -43,7 +43,7 @@ And it is recommended to set also the following parameters according to the visu
 ```
 screen_w = 1920
 screen_h = 1080
-hud_scaling = 0.5
+hud_scaling = 1.5
 ```
 
 Table of Contents

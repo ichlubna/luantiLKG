@@ -55,7 +55,7 @@ void populateLkgPipeline(RenderPipeline *pipeline, Client *client, bool horizont
 	video::ECOLOR_FORMAT depth_format = selectDepthFormat(driver);
 
 	TextureBuffer *buffer = pipeline->createOwned<TextureBuffer>();
-    virtual_size_scale = v2f(1.0f/holo.params["Cols"], 1.0f/holo.params["Rows"]);
+    virtual_size_scale = v2f(1.0f, 1.0f);
     buffer->setTexture(TEXTURE_DEPTH, virtual_size_scale, "3d_depthmap", depth_format);
     buffer->setTexture(TEXTURE_UNIFORM, v2f(0.01f, 0.01f), "3d_uniform", video::ECF_R32F);
     buffer->setTexture(TEXTURE_TEMP, virtual_size_scale, "3d_render_temp", color_format);
